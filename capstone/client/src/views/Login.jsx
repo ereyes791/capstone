@@ -6,7 +6,7 @@ const LoginView = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = () => {
+  const handleLogin = (setToken) => {
     // Handle login logic here
     console.log('Username:', username);
     console.log('Password:', password);
@@ -22,7 +22,7 @@ const LoginView = () => {
       .then(data => {
         console.log(data);
         // Save the token to local storage
-        localStorage.setItem('token', data.token);
+        setToken(data.token);
       })
       .catch(error => {
         console.error('Error:', error);

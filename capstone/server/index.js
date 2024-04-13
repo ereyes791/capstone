@@ -7,7 +7,7 @@ const { connect,
   getUserByEmailAndPassword, 
   createProduct,
   getProducts,
-  getProductByName,
+  getProductByID,
   addProductToCart,
   deleteProductById,
   updateProductById,
@@ -121,10 +121,12 @@ connect()
       });
     });
     
-    app.get('/api/products/:name', (req, res) => {
+    app.get('/api/products/:id', (req, res) => {
       // Get product by ID
-      const name = req.params.name;
-      getProductByName(name).then(products => {
+      const name = req.params.id;
+      console.log(name);
+      getProductByID(name).then(products => {
+        console.log(products);
         res.json(products);
       });
     });

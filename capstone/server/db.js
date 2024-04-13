@@ -106,9 +106,26 @@ async function seedData() {
       await client.query(`
         INSERT INTO Products (product_id,name, description, price, image_links)
         VALUES
-          (uuid_generate_v4(), 'Product 1', 'Description of product 1', 10.99, '{"https://m.media-amazon.com/images/I/51F1c9rz-XL._AC_US100_.jpg", "https://m.media-amazon.com/images/I/518ESKl63qL._AC_US100_.jpg"}'),
-          (uuid_generate_v4(), 'Product 2', 'Description of product 2', 20.99, '{"https://m.media-amazon.com/images/I/21ExrZmMr4L._SX38_SY50_CR,0,0,38,50_.jpg", "https://m.media-amazon.com/images/I/21ExrZmMr4L._SX38_SY50_CR,0,0,38,50_.jpg"}')
-      `);
+          (uuid_generate_v4(), 'Playstation 5', 'Play Like Never Before. The PS5 Digital Edition unleashes new gaming possibilities that you never anticipated. Experience lightning fast loading with an ultra-high speed SSD, deeper immersion with support for haptic feedback, adaptive triggers, and 3D Audio*,and an all-new generation of incredible PlayStation® games.',
+           499.99, '{"https://m.media-amazon.com/images/I/31JaiPXYI8L.jpg", "https://i5.walmartimages.com/asr/f7a0bacc-0eb7-4b2a-8d4c-d58bf8eb2be2.6c196dce5ab9ecf72dc3159782115bfe.jpeg?odnHeight=768&odnWidth=768&odnBg=FFFFFF"}'),
+          (uuid_generate_v4(), 'Xbox Series S', 'Jump into the world of Xbox with the Xbox Series S – Starter Bundle. Includes everything you need to play with a next-gen console and 3 months of Game Pass Ultimate. Be the first to play next-generation games that come to life on your Xbox Series S like Starfield and Forza Motorsport on day one. ', 
+          299.99, '{"https://m.media-amazon.com/images/I/61Xtx4mXvvL.jpg", "https://m.media-amazon.com/images/I/51VQXsQ9P6L._AC_UF894,1000_QL80_.jpg"}'),
+          (uuid_generate_v4(), 'Iphone 15', 'The iPhone 15 has a 6.1 inch all screen Super Retina XDR display with the Dynamic Island. The back is color infused glass, and there is a contoured edge anodized aluminum band around the frame. The side button is on the right side of the device.', 
+          999.99, '{"https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-card-40-iphone15prohero-202309_FMT_WHH?wid=508&hei=472&fmt=p-jpg&qlt=95&.v=1693086369818", "https://www.apple.com/v/iphone/home/bu/images/meta/iphone__ky2k6x5u6vue_og.png"}'),
+          (uuid_generate_v4(), 'Fire TV', 'From playoffs to premieres, experience it all like youre there with support for cinematic 4K Ultra HD.', 
+          199.99, '{"https://m.media-amazon.com/images/I/31f3bj9o63L._AC_SY580_.jpg", "https://m.media-amazon.com/images/I/41ZC-8Qq+PL._AC_SY580_.jpg"}'),
+          (uuid_generate_v4(), 'System design interview:', 'Get ready for your next job interview with this system design interview book. ', 
+          19.99, '{"https://m.media-amazon.com/images/I/51vZ6t5W4gL._SY466_.jpg"}'),
+          (uuid_generate_v4(),'Mens workout short','Whether youre working out or just playing sports, our mens shorts will provide you with a simple and fashion-forward way to stay comfortable and dry throughout the day to help you take your performance to the next level.', 
+          49.99, '{"https://m.media-amazon.com/images/I/31+Zoxsq+oL._SY500__AC_SY200_.jpg"}'),
+          (uuid_generate_v4(), 'CR7 Perfume', 'Cristiano Ronaldo creates fragrances to offer his fans an olfactive experience of his world. Conveying his values and lifestyle, Cristiano Ronaldos fragrances illustrate his passion, winning mindset and inspiration', 
+          39.99, '{"https://m.media-amazon.com/images/I/61PnD9uR0VL._AC_SY240_.jpg"}'),
+          (uuid_generate_v4(), 'USB Microphone Nitro', 'Easy Automatic Connection: This innovative wireless lav microphone is much easier to set. No Adapter, Bluetooth or Application needed. Just get the receiver into your devices, then turn on the portable mic, these two parts will pair automatically.', 
+          85.00, '{"https://m.media-amazon.com/images/I/61sGA4VvMxL._AC_UL320_.jpg","https://m.media-amazon.com/images/I/71bw9LcdXtL._AC_SX679_.jpg"}'),
+          (uuid_generate_v4(), 'Acer Nitro 23.8" Full HD 1920 x 1080 PC Gaming IPS Monitor | AMD FreeSync Premium | 180Hz Refresh | Up to 0.5ms | HDR10 Support | 99% sRGB | 1 x Display Port 1.2 & 2 x HDMI 2.0 | KG241Y M3biip',
+           'In competitive gaming, every frame matters. Introducing Acers KG241Y gaming monitor - the Full HD (1920 x 1080) resolution monitor that can keep up with your game play.', 
+          258.00, '{"https://m.media-amazon.com/images/I/71yo3bmyBnL._AC_SX679_.jpg","https://m.media-amazon.com/images/I/71cUVE7Gq5L._AC_SX679_.jpg"}')
+          `);
   
       // Insert dummy carts
       await client.query(`
@@ -122,8 +139,8 @@ async function seedData() {
       await client.query(`
         INSERT INTO CartItems (cart_item_id, cart_id, product_id, quantity)
         VALUES
-          (uuid_generate_v4(), (SELECT cart_id FROM Carts WHERE user_id = (SELECT user_id FROM Users WHERE username = 'user1')), (SELECT product_id FROM Products WHERE name = 'Product 1'), 2),
-          (uuid_generate_v4(), (SELECT cart_id FROM Carts WHERE user_id = (SELECT user_id FROM Users WHERE username = 'user2')), (SELECT product_id FROM Products WHERE name = 'Product 2'), 3)
+          (uuid_generate_v4(), (SELECT cart_id FROM Carts WHERE user_id = (SELECT user_id FROM Users WHERE username = 'user1')), (SELECT product_id FROM Products WHERE name = 'Playstation 5'), 2),
+          (uuid_generate_v4(), (SELECT cart_id FROM Carts WHERE user_id = (SELECT user_id FROM Users WHERE username = 'user2')), (SELECT product_id FROM Products WHERE name = 'Xbox Series S'), 3)
       `);
   
       console.log('Data seeded successfully');
@@ -172,14 +189,14 @@ async function getProducts() {
     }
   }
   // get product by name with wildcard
-async function getProductByName(name) {
+async function getProductByID(id) {
+
     try {
       const result = await client.query(`
         SELECT * FROM Products
-        WHERE name ILIKE $1
-      `, [`%${name}%`]);
-  
-      return result.rows;
+        WHERE product_id = $1
+      `, [id]);
+      return result.rows[0];
     } catch (error) {
       console.error('Error getting product by name:', error);
     }
@@ -347,7 +364,7 @@ module.exports = {
     getUserByEmailAndPassword,
     createProduct,
     getProducts,
-    getProductByName,
+    getProductByID,
     addProductToCart,
     deleteProductById,
     updateProductById,
