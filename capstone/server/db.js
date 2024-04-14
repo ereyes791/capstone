@@ -201,6 +201,19 @@ async function getProductByID(id) {
       console.error('Error getting product by name:', error);
     }
   }
+  //get product by name but using windcard
+async function getProductByName(name) {
+    try {
+      const result = await client.query(`
+        SELECT * FROM Products
+        WHERE name ILIKE $1
+      `, [`%${name}%`]);
+  
+      return result.rows;
+    } catch (error) {
+      console.error('Error getting product by name:', error);
+    }
+  }
   //get cart by user id
   async function getCartByUserId(userId) {
     try {
@@ -217,8 +230,14 @@ async function getProductByID(id) {
   //add a product to the cart by user id and product id
   async function addProductToCart(userId, productId, quantity) {
     try {
-      const cart = await getCartByUserId(userId);
-  
+      console.log('userId',userId);
+      console.log('productId',productId);
+      console.log('quantity',quantity);
+      let cart = await client.query(`
+        SELECT cart_id FROM Carts WHERE user_id = $1
+      `, [userId]).then(result => {
+        return result.rows[0];
+      });
       if (!cart) {
         // Create a new cart if the user doesn't have one
         await client.query(`
@@ -226,7 +245,6 @@ async function getProductByID(id) {
           VALUES (uuid_generate_v4(), $1)
         `, [userId]);
       }
-  
       // Add the product to the cart
       await client.query(`
         INSERT INTO CartItems (cart_item_id, cart_id, product_id, quantity)
@@ -239,6 +257,7 @@ async function getProductByID(id) {
       `, [userId, productId, quantity]);
   
       console.log('Product added to cart successfully');
+      return getCartByUserId(userId);
     } catch (error) {
       console.error('Error adding product to cart:', error);
     }
@@ -246,6 +265,7 @@ async function getProductByID(id) {
   //get cart items by user id
   async function getCartItemsByUserId(userId) {
     try {
+      console.log(userId);
       const result = await client.query(`
         SELECT ci.cart_item_id, ci.quantity, p.*
         FROM CartItems ci
@@ -374,5 +394,6 @@ module.exports = {
     createOrder,
     getOrdersByUserId,
     getOrderById,
+    getProductByName
 
 };

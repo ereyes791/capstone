@@ -17,7 +17,7 @@ const { connect,
   createOrder,
   getOrdersByUserId,
   getOrderById,
-
+  getProductByName,
 
 
 } = require('./db');
@@ -63,9 +63,6 @@ connect()
       if (token == null) return res.sendStatus(401); // Unauthorized
       console.log(req.headers['authorization'])
       jwt.verify(token, secretKey, (err, user) => {
-        console.log("error",err);
-        console.log("user",user);
-        console.log("jwt",jwt); 
         if (err) return res.sendStatus(403); // Forbidden
         req.user = user; // Attach user information to the request object
         next();
@@ -130,6 +127,16 @@ connect()
         res.json(products);
       });
     });
+    // products by name
+    app.get('/api/product/:name', (req, res) => {
+      // Get product by ID
+      const name = req.params.name;
+      console.log(name);
+      getProductByName(name).then(products => {
+        console.log(products);
+        res.json(products);
+      });
+    });
     
     app.post('/api/products', authenticateToken, (req, res) => {
       // Add a new product
@@ -162,7 +169,8 @@ connect()
     // Cart Routes
     app.get('/api/user/cart', authenticateToken, (req, res) => {
       // Get user's cart
-      const userId = req.user.user_id;
+      console.log('175',req.user);
+      const userId = req.user.user.user_id;
       getCartItemsByUserId(userId).then(cartItems => {
         res.json(cartItems);
       });
@@ -170,10 +178,12 @@ connect()
     
     app.post('/api/user/cart/:product_id', authenticateToken, (req, res) => {
       // Add product to user's cart
-      const userId = req.user.user_id;
+      const userId = req.user.user.user_id;
       const productId = req.params.product_id;
-      addProductToCart(userId, productId).then(cartItem => {
-        res.status(201).json(cartItem);
+      const { quantity } = req.body;
+      addProductToCart(userId, productId,quantity);
+      getCartItemsByUserId(userId).then(cartItems => {
+        res.json(cartItems);
       });
     });
     

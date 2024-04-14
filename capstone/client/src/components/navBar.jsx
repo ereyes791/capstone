@@ -11,6 +11,8 @@ import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import MoreIcon from '@mui/icons-material/MoreVert';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Search = styled('section')(({ theme }) => ({
   position: 'relative',
@@ -52,12 +54,53 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export default function PrimarySearchAppBar() {
+export default function PrimarySearchAppBar({token,user,setUser,setProducts}) {
+  const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = React.useState('');
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
-  const isLoggedIn = true;
+  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+  const handleInputChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      // Perform an action, like making an API request, using the search term
+      console.log('Search term:', searchTerm);
+      fetch(`http://localhost:3000/api/product/${searchTerm}`)
+      .then(response => response.json())
+      .then(data => {
+        // Process API response
+        console.log('enter',data);
+        setProducts(data);
+
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+      });
+
+    }
+  };
+  useEffect(() => {
+    fetch('http://localhost:3000/api/user/profile', {
+      method: "GET",
+      headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer '+token,
+      },})
+      .then(response => response.json())
+      .then(data => {
+        console.log(data); // Log the fetched products
+        setUser(data.user); // Update state with fetched products
+        setIsLoggedIn(true);
+      })
+      .catch(error => {
+        console.error('Error fetching products:', error);
+      });
+  }, []);
 
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -140,22 +183,16 @@ export default function PrimarySearchAppBar() {
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="open drawer"
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Search>
+          <Search >
             <SearchIconWrapper>
               <SearchIcon />
             </SearchIconWrapper>
             <StyledInputBase
               placeholder="Search…"
               inputProps={{ 'aria-label': 'search' }}
+              value={searchTerm}
+              onChange={handleInputChange}
+              onKeyDown={handleKeyPress}
             />
           </Search>
           <Box sx={{ flexGrow: 1 }} />
@@ -170,10 +207,11 @@ export default function PrimarySearchAppBar() {
               onClick={handleProfileMenuOpen}
               color="inherit"
             >
+              {user.username}
               <AccountCircle />
             </IconButton>
           ) : (
-            <IconButton color="inherit">Login</IconButton>
+            <IconButton color="inherit" onClick={()=>navigate('/login')}>Login</IconButton>
           )}
           </Box>
           <Box sx={{ display: { xs: 'flex', md: 'none' } }}>

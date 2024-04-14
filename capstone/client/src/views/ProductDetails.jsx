@@ -3,15 +3,19 @@ import { useParams } from 'react-router-dom';
 import { Typography, Button, TextField, Grid, Card, CardContent, CardMedia } from '@mui/material'; // Import MUI components
 import { Carousel } from 'react-responsive-carousel'; // Import Carousel component
 import 'react-responsive-carousel/lib/styles/carousel.min.css'; // Import Carousel styles
+import NavigationBar from '../components/Navigation';
+import { useNavigate } from 'react-router-dom';
 
-const ProductDetail = () => {
+const ProductDetail = ({token}) => {
   const { id } = useParams(); // Get the id parameter from the URL
   const [product, setProduct] = useState(null);
   const [quantity, setQuantity] = useState(1);
+  const navigationButtons = [{path: "/", name: "Home"}];
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Fetch the product details based on the id
-    fetch('http://localhost:3000/api/products/' + id)
+    fetch('http://localhost:3000/api/products/'+id)
       .then((data) => data.json())
       .then((product) => {
           setProduct(product);
@@ -22,6 +26,22 @@ const ProductDetail = () => {
   const handleAddToCart = () => {
     // Handle adding the product to the cart
     // You can implement this functionality based on your application's logic
+    fetch('http://localhost:3000/api/user/cart/'+id, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer '+token,
+      },
+      body: JSON.stringify({ quantity: quantity }),
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    navigate('/cart');
     console.log(`Added ${quantity} ${product.name} to cart`);
   };
 
@@ -31,6 +51,7 @@ const ProductDetail = () => {
 
   return (
     <div>
+      <NavigationBar linksArrays={navigationButtons}/>
       <Typography variant="h4">Product Detail</Typography>
       <Typography variant="h5">{product.name}</Typography>
       <Carousel sx={{width:140}}>

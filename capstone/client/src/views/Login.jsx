@@ -1,13 +1,16 @@
 // LoginView.js
 import React, { useState } from 'react';
 import { TextField, Button, Container, Typography } from '@mui/material';
-
-const LoginView = () => {
+import { useNavigate } from 'react-router-dom';
+import NavigationBar from '../components/Navigation';
+const LoginView = ({setToken}) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-
-  const handleLogin = (setToken) => {
+  const navigate = useNavigate();
+  const navigationButtons = [{path: "/register", name: "Register"}, {path: "/", name: "Home"}];
+  const handleLogin = () => {
     // Handle login logic here
+
     console.log('Username:', username);
     console.log('Password:', password);
     //conect to the server
@@ -23,6 +26,7 @@ const LoginView = () => {
         console.log(data);
         // Save the token to local storage
         setToken(data.token);
+        navigate('/');
       })
       .catch(error => {
         console.error('Error:', error);
@@ -30,7 +34,8 @@ const LoginView = () => {
   };
 
   return (
-    <Container maxWidth="sm">
+    <Container>
+      <NavigationBar linksArrays={navigationButtons}/>
       <div style={{ marginTop: '100px', textAlign: 'center' }}>
         <Typography variant="h4" gutterBottom>
           Login
