@@ -335,13 +335,13 @@ async function updateProductById(productId, name, description, price) {
     }
   }
   //create user orders
-  async function createOrder(userId, totalAmount) {
+  async function createOrder(userId, total_amount) {
     try {
       const result = await client.query(`
         INSERT INTO Orders (order_id, user_id, total_amount)
         VALUES (uuid_generate_v4(), $1, $2)
         RETURNING *
-      `, [userId, totalAmount]);
+      `, [userId, total_amount]);
   
       return result.rows[0];
     } catch (error) {

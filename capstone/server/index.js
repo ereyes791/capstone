@@ -209,9 +209,9 @@ connect()
     // Order Routes
     app.post('/api/user/orders', authenticateToken, (req, res) => {
       // Place order
-      const userId = req.user.user_id;
-      const { items } = req.body;
-      createOrder(userId, items).then(order => {
+      const userId = req.user.user.user_id;
+      const { total_amount } = req.body;
+      createOrder(userId, total_amount).then(order => {
         res.status(201).json(order);
       });
     });
